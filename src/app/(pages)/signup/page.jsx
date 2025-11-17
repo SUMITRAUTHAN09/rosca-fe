@@ -4,6 +4,7 @@ import IMAGES from "@/app/assets/images.constant";
 import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
+import { signupUser } from "@/lib/API/userApi";
 import { Authentication_Fields } from "@/Store/Authentication-Input";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Image from "next/image";
@@ -11,7 +12,6 @@ import Link from "next/link";
 import { toast } from "sonner";
 import * as Yup from "yup";
 import { LOGIN, NAVIGATION_ROUTES, RENTAL, SIGNUP } from "../../constant";
-import { signupUser } from "@/lib/API/userApi";
 
 export default function SignUpPage() {
   const validationSchema = Yup.object({

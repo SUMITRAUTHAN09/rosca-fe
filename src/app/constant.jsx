@@ -23,20 +23,22 @@ export const NAVIGATION_ROUTES = {
   ADD_ROOM: "/add-room",
 };
 
-export const ROOMTYPE = [
-  "Single Room",
-  "Double Room",
-  "Shared Room",
-  "Flat",
-  "Apartment",
-];
+// In your constants file
 export const AMENITYOPTIONS = [
-  "WiFi",
-  "Parking",
+  "wifi",
+  "parking",
   "AC",
-  "Geyser",
-  "TV",
-  "Fridge",
-  "Kitchen",
-  "Laundry",
+  "geysers",
+  "tv",
+  "fridge",
+  "kitchen",
+  "laundry",
+];
+
+export const ROOMTYPE = [
+  "single room",
+  "double room",
+  "shared room",
+  "flat",
+  "apartments",
 ];

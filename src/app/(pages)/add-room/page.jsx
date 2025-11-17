@@ -3,7 +3,7 @@
 import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
-import { AddRoom_Fields } from "@/Store/AddRooms_Fields";
+import { addRoom } from "@/lib/API/roomApi";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -15,12 +15,11 @@ import {
 import { ErrorMessage, Form, Formik } from "formik";
 import { toast } from "sonner";
 import * as Yup from "yup";
-import { AMENITYOPTIONS, ROOMTYPE, NAVIGATION_ROUTES } from "../../constant";
-import { addRoom } from "@/lib/API/roomApi";
+import { AMENITYOPTIONS, NAVIGATION_ROUTES, ROOMTYPE } from "../../constant";
 
 export default function AddRoom() {
   const validationSchema = Yup.object({
-    title: Yup.string()
+    roomTitle: Yup.string()
       .trim()
       .required("Title is required")
       .matches(/^[a-zA-Z0-9\s]+$/, "Only letters and numbers allowed"),
@@ -35,51 +34,66 @@ export default function AddRoom() {
       .min(0, "Price cannot be negative")
       .required("Room price is required"),
 
-    roomType: Yup.string().required("Room Type is required"),
+    type: Yup.string().required("Room Type is required"),
 
     amenities: Yup.array()
       .of(Yup.string())
       .min(1, "Select at least one amenity"),
 
-    contact: Yup.string()
+    contactNumber: Yup.string()
       .matches(/^[0-9]{10}$/, "Must be 10 digits")
       .required("Phone number is required"),
 
-    owner: Yup.string()
+    ownerName: Yup.string()
       .trim()
       .matches(/^[a-zA-Z\s]+$/, "Only letters allowed")
       .required("Owner Name is required"),
+
+    beds: Yup.number()
+      .typeError("Must be a number")
+      .min(1, "At least 1 bed required")
+      .required("Number of beds is required"),
+
+    bathrooms: Yup.number()
+      .typeError("Must be a number")
+      .min(1, "At least 1 bathroom required")
+      .required("Number of bathrooms is required"),
   });
 
   const initialValues = {
-    title: "",
+    roomTitle: "",
     location: "",
     price: "",
-    roomType: "",
+    type: "",
     amenities: [],
     beds: "",
-    baths: "",
+    bathrooms: "",
     description: "",
-    ownerDemands: "",
-    contact: "",
-    owner: "",
+    ownerRequirements: "",
+    contactNumber: "",
+    ownerName: "",
+    images: [], // You'll need to handle image upload separately
   };
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
+      // Map frontend field names to backend field names
       const roomData = {
-        title: values.title,
-        location: values.location,
-        price: values.price,
-        roomType: values.roomType,
+        roomTitle: values.roomTitle.trim(),
+        location: values.location.trim(),
+        price: Number(values.price),
+        type: values.type,
         amenities: values.amenities,
-        beds: values.beds || 1,
-        baths: values.baths || 1,
-        description: values.description,
-        ownerDemands: values.ownerDemands,
-        contact: values.contact,
-        owner: values.owner,
+        beds: Number(values.beds) || 1,
+        bathrooms: Number(values.bathrooms) || 1,
+        description: values.description?.trim() || "",
+        ownerRequirements: values.ownerRequirements?.trim() || "",
+        contactNumber: values.contactNumber,
+        ownerName: values.ownerName.trim(),
+        images: ["placeholder.jpg"], // TODO: Replace with actual image upload
       };
+
+      console.log("📤 Sending room data:", roomData);
 
       const response = await addRoom(roomData);
 
@@ -88,10 +102,12 @@ export default function AddRoom() {
         resetForm();
 
         setTimeout(() => {
-          window.location.href = NAVIGATION_ROUTES.USER_PROFILE || "/user-profile";
+          window.location.href =
+            NAVIGATION_ROUTES.USER_PROFILE || "/user-profile";
         }, 1200);
       }
     } catch (error) {
+      console.error("❌ Add room error:", error);
       toast.error(error.message || "Failed to add room. Please try again.");
     } finally {
       setSubmitting(false);
@@ -113,24 +129,117 @@ export default function AddRoom() {
         >
           {({ handleChange, setFieldValue, values, isSubmitting }) => (
             <Form className="space-y-3">
-              {AddRoom_Fields.filter(
-                (field) =>
-                  !["roomType", "amenities", "media"].includes(field.name)
-              ).map((field) => {
-                return (
-                  <FormInput
-                    key={field.id}
-                    id={field.name}
-                    name={field.name}
-                    label={field.label}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    onChange={handleChange}
-                    value={values[field.name]}
-                    min="0"
-                  />
-                );
-              })}
+              {/* Room Title */}
+              <FormInput
+                id="roomTitle"
+                name="roomTitle"
+                label="Room Title"
+                type="text"
+                placeholder="Enter room title"
+                onChange={handleChange}
+                value={values.roomTitle}
+              />
+
+              {/* Owner Name */}
+              <FormInput
+                id="ownerName"
+                name="ownerName"
+                label="Owner Name"
+                type="text"
+                placeholder="Enter owner name"
+                onChange={handleChange}
+                value={values.ownerName}
+              />
+
+              {/* Location */}
+              <FormInput
+                id="location"
+                name="location"
+                label="Location"
+                type="text"
+                placeholder="Enter location"
+                onChange={handleChange}
+                value={values.location}
+              />
+
+              {/* Price */}
+              <FormInput
+                id="price"
+                name="price"
+                label="Price (per month)"
+                type="number"
+                placeholder="Enter price"
+                onChange={handleChange}
+                value={values.price}
+                min="0"
+              />
+
+              {/* Contact Number */}
+              <FormInput
+                id="contactNumber"
+                name="contactNumber"
+                label="Contact Number"
+                type="text"
+                placeholder="Enter 10-digit phone number"
+                onChange={handleChange}
+                value={values.contactNumber}
+              />
+
+              {/* Beds */}
+              <FormInput
+                id="beds"
+                name="beds"
+                label="Number of Beds"
+                type="number"
+                placeholder="Enter number of beds"
+                onChange={handleChange}
+                value={values.beds}
+                min="1"
+              />
+
+              {/* Bathrooms */}
+              <FormInput
+                id="bathrooms"
+                name="bathrooms"
+                label="Number of Bathrooms"
+                type="number"
+                placeholder="Enter number of bathrooms"
+                onChange={handleChange}
+                value={values.bathrooms}
+                min="1"
+              />
+
+              {/* Description */}
+              <div>
+                <label className="font-small text-gray-800">
+                  Description (Optional)
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter room description"
+                  onChange={handleChange}
+                  value={values.description}
+                  className="w-full p-2 border rounded-md"
+                  rows={3}
+                />
+              </div>
+
+              {/* Owner Requirements */}
+              <div>
+                <label className="font-small text-gray-800">
+                  Owner Requirements (Optional)
+                </label>
+                <textarea
+                  id="ownerRequirements"
+                  name="ownerRequirements"
+                  placeholder="Enter any specific requirements"
+                  onChange={handleChange}
+                  value={values.ownerRequirements}
+                  className="w-full p-2 border rounded-md"
+                  rows={2}
+                />
+              </div>
 
               {/* DROPDOWN FOR ROOM TYPE */}
               <div>
@@ -142,16 +251,14 @@ export default function AddRoom() {
                       variant="outline"
                       className="w-full justify-between font-small"
                     >
-                      {values.roomType || "Select Room Type"}
+                      {values.type || "Select Room Type"}
                     </Button>
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent className="w-full p-2 bg-white shadow-md border rounded-md cursor-pointer">
                     <DropdownMenuRadioGroup
-                      value={values.roomType}
-                      onValueChange={(value) =>
-                        setFieldValue("roomType", value)
-                      }
+                      value={values.type}
+                      onValueChange={(value) => setFieldValue("type", value)}
                     >
                       {ROOMTYPE.map((type) => (
                         <DropdownMenuRadioItem key={type} value={type}>
@@ -163,7 +270,7 @@ export default function AddRoom() {
                 </DropdownMenu>
 
                 <ErrorMessage
-                  name="roomType"
+                  name="type"
                   component="div"
                   className="text-red-500 text-sm"
                 />

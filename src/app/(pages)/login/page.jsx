@@ -4,14 +4,13 @@ import IMAGES from "@/app/assets/images.constant";
 import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
+import { loginUser } from "@/lib/API/userApi";
 import { Form, Formik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import * as Yup from "yup";
-import { Authentication_Fields } from "../../../Store/Authentication-Input";
 import { LOGIN, NAVIGATION_ROUTES, RENTAL } from "../../constant";
-import { loginUser } from "@/lib/API/userApi";
 
 export default function LoginPage() {
   const validationSchema = Yup.object({
@@ -40,8 +39,8 @@ export default function LoginPage() {
         toast.success(`Welcome back, ${response.user.firstName}!`);
 
         // Store user data in localStorage
-        localStorage.setItem('user', JSON.stringify(response.user));
-        localStorage.setItem('userLoggedIn', 'true');
+        localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("userLoggedIn", "true");
 
         setTimeout(() => {
           window.location.href = NAVIGATION_ROUTES.UIPAGE;
