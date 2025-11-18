@@ -1,14 +1,14 @@
 export const AddRoom_Fields = [
   {
     id: "012",
-    name: "owner",
+    name: "ownerName",
     label: "Owner name",
     type: "text",
     placeholder: "Owner name",
   },
   {
     id: "001",
-    name: "title",
+    name: "roomTitle",
     label: "Room Title (Enter your property name)",
     type: "text",
     placeholder: "Enter room title (e.g., Cozy Apartment)",
@@ -31,29 +31,22 @@ export const AddRoom_Fields = [
     id: "004",
     name: "beds",
     label: "Beds",
-    type: "text",
+    type: "number",
     placeholder: "Number of beds",
   },
   {
     id: "005",
-    name: "baths",
+    name: "bathrooms",
     label: "Baths",
-    type: "text",
+    type: "number",
     placeholder: "Number of bathrooms",
-  },
-  {
-    id: "006",
-    name: "roomType",
-    label: "Room Type",
-    type: "text",
-    placeholder: "Boys PG / Girls PG / Flat",
   },
   {
     id: "007",
     name: "amenities",
     label: "Facilities",
     type: "text",
-    placeholder: "Wifi, Parking, Garden (comma separated)",
+    placeholder: "Select amenities",
   },
   {
     id: "008",
@@ -64,14 +57,14 @@ export const AddRoom_Fields = [
   },
   {
     id: "009",
-    name: "ownerDemands",
+    name: "ownerRequirements",
     label: "Owner Requirements",
     type: "text",
     placeholder: "Security, no smoking, etc.",
   },
   {
     id: "010",
-    name: "contact",
+    name: "contactNumber",
     label: "Contact Number",
     type: "text",
     placeholder: "Enter owner's contact number",
@@ -81,19 +74,5 @@ export const AddRoom_Fields = [
     name: "images",
     label: "Upload Images",
     type: "file",
-  },
-];
-
-export const EDIT_FIELDS = [
-  { name: "title", label: "Room Title", placeholder: "Room Title" },
-  { name: "location", label: "Location", placeholder: "Location" },
-  { name: "price", label: "Price", placeholder: "Price" },
-  { name: "roomType", label: "Room Type", placeholder: "Room Type" },
-  { name: "contact", label: "Contact Number", placeholder: "Contact Number" },
-  { name: "beds", label: "Bed's Number", placeholder: "Bed's Number" },
-  {
-    name: "baths",
-    label: "Bathroom's Number",
-    placeholder: "Bathroom's Number",
   },
 ];
