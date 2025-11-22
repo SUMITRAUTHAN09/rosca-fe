@@ -1,4 +1,3 @@
-import { quickLinks, services, socials } from "@/store/Footer-Data";
 import Image from "next/image";
 import Link from "next/link";
 import IMAGES from "../../app/assets/images.constant";
@@ -9,6 +8,7 @@ import {
   PHONE_NO,
   RENTAL,
 } from "../../app/constant.jsx";
+import { quickLinks, services, socials } from "../../Store/Footer-Data";
 import { Typography } from "./typography";
 
 export default function Footer() {
