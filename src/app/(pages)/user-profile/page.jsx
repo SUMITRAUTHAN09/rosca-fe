@@ -33,6 +33,7 @@ export default function ProfilePage() {
   const handleEdit = (selectedRoom) => {
     setEditForm(selectedRoom);
     setIsEditModalOpen(true);
+    console.log("user");
   };
 
   const handleEditChange = (e) => {
