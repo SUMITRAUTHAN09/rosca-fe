@@ -1,12 +1,12 @@
 const baseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app/api";
+  "https://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app/api";
 
 // Helper function to get the base URL without /api suffix for static assets
 export const getServerBaseUrl = () => {
   return process.env.NEXT_PUBLIC_API_BASE_URL
     ? process.env.NEXT_PUBLIC_API_BASE_URL.replace("/api", "")
-    : "http://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app/api";
+    : "https://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app";
 };
 
 // Helper function to construct full image URL from path
@@ -20,9 +20,9 @@ export const getImageUrl = (imagePath) => {
 
 export async function getAllRooms() {
   try {
-    console.log("🔍 Fetching rooms from:", ` ${baseUrl}` / rooms);
+    console.log("🔍 Fetching rooms from:", `${baseUrl} / rooms`);
 
-    const response = await fetch(`${baseUrl}` / rooms, {
+    const response = await fetch(`${baseUrl} / rooms `, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store", // Disable caching for dynamic data
@@ -35,7 +35,7 @@ export async function getAllRooms() {
     }
 
     const data = await response.json();
-    console.log("✅ Rooms fetched successfully");
+    console.log("✅ Rooms fetched successfully:", data);
     return data;
   } catch (error) {
     console.error("❌ Get all rooms error:", error);
@@ -60,7 +60,7 @@ export async function getRoomById(id) {
     }
 
     const data = await response.json();
-    console.log("✅ Room fetched successfully");
+    console.log("✅ Room fetched successfully:", data);
     return data;
   } catch (error) {
     console.error("❌ Get room by ID error:", error);
@@ -71,7 +71,7 @@ export async function getRoomById(id) {
 export async function addRoom(formData) {
   try {
     console.log("📤 ═══════════════════════════════════════");
-    console.log("📤 Sending room data to:", `${baseUrl}` / rooms);
+    console.log("📤 Sending room data to:", `${baseUrl}/rooms`);
 
     // Log FormData contents for debugging
     for (let pair of formData.entries()) {
@@ -79,7 +79,7 @@ export async function addRoom(formData) {
     }
     console.log("📤 ═══════════════════════════════════════");
 
-    const response = await fetch(`${baseUrl}` / rooms, {
+    const response = await fetch(`${baseUrl}/rooms`, {
       method: "POST",
       body: formData,
       // DO NOT set Content-Type header; browser sets it automatically for multipart/form-data
@@ -119,7 +119,7 @@ export async function updateRoom(id, roomData) {
     }
 
     const data = await response.json();
-    console.log("✅ Room updated successfully");
+    console.log("✅ Room updated successfully:", data);
     return data;
   } catch (error) {
     console.error("❌ Update room error:", error);
@@ -143,7 +143,7 @@ export async function deleteRoom(id) {
     }
 
     const data = await response.json();
-    console.log("✅ Room deleted successfully");
+    console.log("✅ Room deleted successfully:", data);
     return data;
   } catch (error) {
     console.error("❌ Delete room error:", error);

@@ -1,6 +1,6 @@
 const baseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app/api";
+  "https://rosca-5shcwqmu2-nimish-agarwals-projects.vercel.app/api";
 
 export async function signupUser(userData) {
   try {
@@ -19,7 +19,7 @@ export async function signupUser(userData) {
     }
 
     const data = await response.json();
-    console.log("✅ Signup successful");
+    console.log("✅ Signup successful:", data);
     return data;
   } catch (error) {
     console.error("❌ Signup error:", error);
@@ -53,7 +53,7 @@ export async function loginUser(credentials) {
       }
     }
 
-    console.log("✅ Login successful");
+    console.log("✅ Login successful:", data);
     return data;
   } catch (error) {
     console.error("❌ Login error:", error);
@@ -78,7 +78,7 @@ export async function forgotPassword(emailData) {
     }
 
     const data = await response.json();
-    console.log("✅ Password reset email sent");
+    console.log("✅ Password reset email sent:", data);
     return data;
   } catch (error) {
     console.error("❌ Forgot password error:", error);
@@ -103,7 +103,7 @@ export async function verifyOtp(otpData) {
     }
 
     const data = await response.json();
-    console.log("✅ OTP verified successfully");
+    console.log("✅ OTP verified successfully:", data);
     return data;
   } catch (error) {
     console.error("❌ Verify OTP error:", error);
@@ -128,7 +128,7 @@ export async function resetPassword(resetData) {
     }
 
     const data = await response.json();
-    console.log("✅ Password reset successful");
+    console.log("✅ Password reset successful:", data);
     return data;
   } catch (error) {
     console.error("❌ Reset password error:", error);
