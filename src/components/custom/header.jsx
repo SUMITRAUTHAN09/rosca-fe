@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "../ui/navigation-menu.jsx";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet.jsx";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -30,6 +25,14 @@ export default function Header() {
     window.location.href = NAVIGATION_ROUTES.LOGIN;
   };
 
+  const menuItem = [
+    { name: "Home", href: NAVIGATION_ROUTES.HOME },
+    { name: "Add your Property", href: "/add-room" },
+    { name: "Rooms", href: "#rooms" },
+    { name: "About", href: "#about" },
+    { name: "Contact", href: "#contact" },
+    { name: "Profile", href: "/user-profile" },
+  ];
   return (
     <header className="w-full bg-gray-100 shadow-md border-b border-gray-200 fixed top-0 z-10">
       <div className="max-w-9xl mx-auto flex flex-wrap items-center justify-between px-6 py-3 gap-3">
@@ -58,33 +61,27 @@ export default function Header() {
 
         {/* 🔹 CASE 2: User logged in → Show full menu */}
         {isLoggedIn && (
-          <div className="flex flex-wrap items-center justify-center gap-6 text-center">
-            <NavigationMenu>
-              <NavigationMenuList>
-                {[
-                  { name: "Home", href: NAVIGATION_ROUTES.HOME },
-                  { name: "Add your Property", href: "/add-room" },
-                  { name: "Rooms", href: "#rooms" },
-                  { name: "About", href: "#about" },
-                  { name: "Contact", href: "#contact" },
-                  { name: "Profile", href: "/user-profile" },
-                ].map((item) => (
-                  <NavigationMenuItem key={item.name}>
-                    <NavigationMenuLink asChild>
-                      <Link href={item.href}>
-                        <Typography variant="body">{item.name}</Typography>
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
+          <Sheet>
+            <SheetTrigger>
+              <Menu className="w-8 h-8 text-gray-700" />
+            </SheetTrigger>
 
-            {/* Logout */}
-            <button onClick={handleLogout}>
-              <Typography variant="buttonPrimary">Log out</Typography>
-            </button>
-          </div>
+            <SheetContent side="left" className="p-5 space-y-6">
+              <SheetTitle className="text-2xl font-bold">{RENTAL}</SheetTitle>
+
+              <nav className="flex flex-col gap-4 mt-4">
+                {menuItem.map((item) => (
+                  <Link key={item.name} href={item.href}>
+                    <Typography variant="body">{item.name}</Typography>
+                  </Link>
+                ))}
+
+                <button onClick={handleLogout}>
+                  <Typography variant="buttonPrimary">Log out</Typography>
+                </button>
+              </nav>
+            </SheetContent>
+          </Sheet>
         )}
       </div>
     </header>
