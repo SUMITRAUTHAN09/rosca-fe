@@ -19,9 +19,9 @@ export const getImageUrl = (imagePath) => {
 
 export async function getAllRooms() {
   try {
-    console.log("🔍 Fetching rooms from:", `${baseUrl}/rooms`);
+    console.log("🔍 Fetching rooms from:", `${baseUrl}/api/rooms`);
 
-    const response = await fetch(`${baseUrl}/rooms `, {
+    const response = await fetch(`${baseUrl}/api/rooms`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store", // Disable caching for dynamic data
@@ -46,7 +46,7 @@ export async function getRoomById(id) {
   try {
     console.log("🔍 Fetching room by ID:", id);
 
-    const response = await fetch(`${baseUrl}/rooms/${id}`, {
+    const response = await fetch(`${baseUrl}/api/rooms/${id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
@@ -70,7 +70,7 @@ export async function getRoomById(id) {
 export async function addRoom(formData) {
   try {
     console.log("📤 ═══════════════════════════════════════");
-    console.log("📤 Sending room data to:", `${baseUrl}/rooms`);
+    console.log("📤 Sending room data to:", `${baseUrl}/api/rooms`);
 
     // Log FormData contents for debugging
     for (let pair of formData.entries()) {
@@ -78,7 +78,7 @@ export async function addRoom(formData) {
     }
     console.log("📤 ═══════════════════════════════════════");
 
-    const response = await fetch(`${baseUrl}/rooms`, {
+    const response = await fetch(`${baseUrl}/api/rooms`, {
       method: "POST",
       body: formData,
       // DO NOT set Content-Type header; browser sets it automatically for multipart/form-data
@@ -105,7 +105,7 @@ export async function updateRoom(id, roomData) {
   try {
     console.log("🔄 Updating room:", id);
 
-    const response = await fetch(`${baseUrl}/rooms/${id}`, {
+    const response = await fetch(`${baseUrl}/api/rooms/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(roomData),
@@ -130,7 +130,7 @@ export async function deleteRoom(id) {
   try {
     console.log("🗑 Deleting room:", id);
 
-    const response = await fetch(`${baseUrl}/rooms/${id}`, {
+    const response = await fetch(`${baseUrl}/api/rooms/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
