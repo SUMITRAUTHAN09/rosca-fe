@@ -5,14 +5,40 @@ import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
 import { loginUser } from "@/lib/API/userApi";
+import { getGoogleAuthUrl } from "@/lib/API/googleAuthapi";
 import { Form, Formik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import * as Yup from "yup";
 import { LOGIN, NAVIGATION_ROUTES, RENTAL } from "../../constant";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // Check for OAuth errors in URL
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      switch (error) {
+        case 'no_code':
+          toast.error('Authorization code not received from Google');
+          break;
+        case 'email_not_verified':
+          toast.error('Please use a verified Google account');
+          break;
+        case 'oauth_failed':
+          toast.error('Google authentication failed. Please try again.');
+          break;
+        default:
+          toast.error('Authentication failed. Please try again.');
+      }
+    }
+  }, [searchParams]);
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .trim()
@@ -52,6 +78,19 @@ export default function LoginPage() {
       toast.error(error.message || "Login failed. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const { url } = await getGoogleAuthUrl();
+      // Redirect to Google OAuth
+      window.location.href = url;
+    } catch (error) {
+      console.error('Error initiating Google login:', error);
+      toast.error('Failed to connect with Google. Please try again.');
+      setIsGoogleLoading(false);
     }
   };
 
@@ -137,17 +176,40 @@ export default function LoginPage() {
             </Link>
           </Typography>
 
-          <div className="mt-3 mb-5">
-            <Typography
-              variant="paraSecondary"
-              className="ml-30 text-black-300"
-            >
-              Or continue with
-            </Typography>
-            <div className="flex space-x-3 mt-3">
-              <Typography variant="btnGoogle">Google</Typography>
-            </div>
+          {/* Divider */}
+          <div className="flex items-center gap-4 my-6">
+            <div className="flex-1 h-px bg-gray-400"></div>
+            <span className="text-gray-700 text-sm font-medium">OR</span>
+            <div className="flex-1 h-px bg-gray-400"></div>
           </div>
+
+          {/* Google Sign In Button */}
+          <Button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isGoogleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border-2 border-gray-300 py-3 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            {isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google'}
+          </Button>
         </div>
       </div>
     </div>
