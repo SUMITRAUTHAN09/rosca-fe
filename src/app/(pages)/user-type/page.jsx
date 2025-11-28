@@ -52,7 +52,7 @@ export default function CheckUser() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-10 text-center">
       <div className="max-w-4xl w-full">
         <Typography variant="h2" className="text-center mb-20">
-          Which kind of role are you looking for?
+          What Are You Looking For?
         </Typography>
 
         <div className="grid md:grid-cols-2 gap-6 m-8">
