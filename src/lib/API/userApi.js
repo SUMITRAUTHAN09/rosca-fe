@@ -5,7 +5,7 @@ export async function signupUser(userData) {
   try {
     console.log("📝 Signing up user:", userData.email);
 
-    const response = await fetch(`${baseUrl}/users/signup`, {
+    const response = await fetch(`${baseUrl}/api/users/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -30,7 +30,7 @@ export async function loginUser(credentials) {
   try {
     console.log("🔐 Logging in user:", credentials.email);
 
-    const response = await fetch(`${baseUrl}/users/login`, {
+    const response = await fetch(`${baseUrl}/api/users/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
@@ -64,7 +64,7 @@ export async function forgotPassword(emailData) {
   try {
     console.log("📧 Requesting password reset for:", emailData.email);
 
-    const response = await fetch(`${baseUrl}/users/forgot-password`, {
+    const response = await fetch(`${baseUrl}/api/users/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(emailData),
@@ -89,7 +89,7 @@ export async function verifyOtp(otpData) {
   try {
     console.log("🔢 Verifying OTP for:", otpData.email);
 
-    const response = await fetch(`${baseUrl}/users/verify-otp`, {
+    const response = await fetch(`${baseUrl}/api/users/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(otpData),
@@ -114,7 +114,7 @@ export async function resetPassword(resetData) {
   try {
     console.log("🔒 Resetting password");
 
-    const response = await fetch(`${baseUrl}/users/reset-password`, {
+    const response = await fetch(`${baseUrl}/api/users/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(resetData),
