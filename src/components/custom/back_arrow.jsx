@@ -8,7 +8,7 @@ export default function BackArrow() {
       className="absolute top-4 left-6 z-20 cursor-pointer"
       onClick={() => router.back()}
     >
-      <Typography variant="link" className="text-white">
+      <Typography variant="link" className="text-black text-3xl">
         ←
       </Typography>
     </div>
