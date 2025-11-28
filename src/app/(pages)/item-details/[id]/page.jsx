@@ -1,23 +1,26 @@
 "use client";
 
+import BackArrow from "@/components/custom/back_arrow";
 import Footer from "@/components/custom/footer";
 import Header from "@/components/custom/header";
 import { Typography } from "@/components/custom/typography";
+import { getRoomById } from "@/lib/API/roomApi";
 import { Bath, Bed, MapPin } from "lucide-react";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
-import { getRoomById } from "@/lib/API/roomApi";
 import { toast } from "sonner";
 
 // Helper function to construct image URL correctly
 const getImageUrl = (imagePath) => {
-  if (!imagePath) return '';
-  
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'https://rosca-be.vercel.app/';
-  
+  if (!imagePath) return "";
+
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL?.replace("/api", "") ||
+    "https://rosca-be.vercel.app/";
+
   // Remove ALL leading slashes to prevent double slashes
-  const cleanPath = imagePath.replace(/^\/+/, '');
-  
+  const cleanPath = imagePath.replace(/^\/+/, "");
+
   return `${baseUrl}/${cleanPath}`;
 };
 
@@ -36,7 +39,7 @@ export default function RoomDetails({ params }) {
     try {
       setLoading(true);
       const response = await getRoomById(id);
-      
+
       if (response.success) {
         setRoom(response.data);
       }
@@ -53,6 +56,7 @@ export default function RoomDetails({ params }) {
       <>
         <Header />
         <div className="flex items-center justify-center min-h-screen pt-32">
+          <BackArrow />
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
             <Typography variant="paraPrimary" className="mt-4">
@@ -188,14 +192,17 @@ export default function RoomDetails({ params }) {
                     <Bed /> {room.beds || 1} {room.beds === 1 ? "Bed" : "Beds"}
                   </span>
                   <span className="flex items-center gap-2">
-                    <Bath /> {room.bathrooms || 1} {room.bathrooms === 1 ? "Bathroom" : "Bathrooms"}
+                    <Bath /> {room.bathrooms || 1}{" "}
+                    {room.bathrooms === 1 ? "Bathroom" : "Bathrooms"}
                   </span>
 
-                  {room.amenities && room.amenities.length > 0 && room.amenities.map((item, i) => (
-                    <span key={i} className="flex items-center gap-2">
-                      ✅ {item}
-                    </span>
-                  ))}
+                  {room.amenities &&
+                    room.amenities.length > 0 &&
+                    room.amenities.map((item, i) => (
+                      <span key={i} className="flex items-center gap-2">
+                        ✅ {item}
+                      </span>
+                    ))}
                 </div>
               </div>
 

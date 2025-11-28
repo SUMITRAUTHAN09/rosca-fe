@@ -1,17 +1,18 @@
 "use client";
 
 import IMAGES from "@/app/assets/images.constant";
+import BackArrow from "@/components/custom/back_arrow";
 import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
-import { signupUser } from "@/lib/API/userApi";
 import { getGoogleAuthUrl } from "@/lib/API/googleAuthapi";
+import { signupUser } from "@/lib/API/userApi";
 import { Authentication_Fields } from "@/Store/Authentication-Input";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import * as Yup from "yup";
 import { LOGIN, NAVIGATION_ROUTES, RENTAL, SIGNUP } from "../../constant";
@@ -23,20 +24,20 @@ function SignUpContent() {
 
   // Check for OAuth errors in URL
   useEffect(() => {
-    const error = searchParams.get('error');
+    const error = searchParams.get("error");
     if (error) {
       switch (error) {
-        case 'no_code':
-          toast.error('Authorization code not received from Google');
+        case "no_code":
+          toast.error("Authorization code not received from Google");
           break;
-        case 'email_not_verified':
-          toast.error('Please use a verified Google account');
+        case "email_not_verified":
+          toast.error("Please use a verified Google account");
           break;
-        case 'oauth_failed':
-          toast.error('Google authentication failed. Please try again.');
+        case "oauth_failed":
+          toast.error("Google authentication failed. Please try again.");
           break;
         default:
-          toast.error('Authentication failed. Please try again.');
+          toast.error("Authentication failed. Please try again.");
       }
     }
   }, [searchParams]);
@@ -104,14 +105,15 @@ function SignUpContent() {
       // Redirect to Google OAuth
       window.location.href = url;
     } catch (error) {
-      console.error('Error initiating Google signup:', error);
-      toast.error('Failed to connect with Google. Please try again.');
+      console.error("Error initiating Google signup:", error);
+      toast.error("Failed to connect with Google. Please try again.");
       setIsGoogleLoading(false);
     }
   };
 
   return (
     <div className="flex w-full bg-blue rounded-lg shadow-lg overflow-hidden bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+      <BackArrow />
       {/* Left Section */}
       <div className="hidden md:flex w-1/2 items-center justify-center bg-blue-900 relative">
         <div className="absolute inset-0">
@@ -226,7 +228,9 @@ function SignUpContent() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google'}
+            {isGoogleLoading
+              ? "Connecting to Google..."
+              : "Continue with Google"}
           </Button>
 
           <Typography variant="paraSecondary" className="mt-5 text-center">
@@ -247,14 +251,16 @@ function SignUpContent() {
 // Main component with Suspense wrapper
 export default function SignUpPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-xl font-semibold text-gray-800">Loading...</p>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-xl font-semibold text-gray-800">Loading...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <SignUpContent />
     </Suspense>
   );

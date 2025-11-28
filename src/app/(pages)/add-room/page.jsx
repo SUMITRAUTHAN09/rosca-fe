@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import BackArrow from "@/components/custom/back_arrow";
 import {
   Command,
   CommandEmpty,
@@ -82,6 +83,7 @@ const initialValues = {
 export default function AddRoom() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen w-full bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600 py-6">
+      <BackArrow />
       <div>
         <Typography variant="h2" className="text-center">
           Listing Property

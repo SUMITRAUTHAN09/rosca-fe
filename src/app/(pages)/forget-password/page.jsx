@@ -1,15 +1,15 @@
 "use client";
 
 import { LOGIN, NAVIGATION_ROUTES } from "@/app/constant";
+import BackArrow from "@/components/custom/back_arrow";
 import FormInput from "@/components/custom/input-field";
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
-import { Authentication_Fields } from "@/Store/Authentication-Input";
+import { forgotPassword } from "@/lib/API/userApi";
 import { Form, Formik } from "formik";
 import Link from "next/link";
 import { toast } from "sonner";
 import * as Yup from "yup";
-import { forgotPassword } from "@/lib/API/userApi";
 
 export default function ForgetPasswordPage() {
   const initialValues = {
@@ -31,7 +31,7 @@ export default function ForgetPasswordPage() {
         toast.success("OTP sent to your email!");
 
         // Store email in sessionStorage for next page
-        sessionStorage.setItem('resetEmail', values.email.trim());
+        sessionStorage.setItem("resetEmail", values.email.trim());
 
         setTimeout(() => {
           window.location.href = NAVIGATION_ROUTES.NEW_PASSWORD;
@@ -48,6 +48,7 @@ export default function ForgetPasswordPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+      <BackArrow />
       <div className="w-full max-w-md p-10 bg-white/60 backdrop-blur-md border border-black/40 rounded-2xl shadow-2xl mx-4">
         <Typography variant="h4" className="ml-20">
           Forgot Password

@@ -4,6 +4,7 @@ import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
 import { useAuthStore, useRoomStore } from "@/Store/Profile-data";
 
+import BackArrow from "@/components/custom/back_arrow";
 import Footer from "@/components/custom/footer";
 import Image from "next/image";
 import Link from "next/link";
@@ -56,13 +57,7 @@ export default function ProfilePage() {
           id="profile-hero"
           className="relative w-full h-[50vh] flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
         >
-          <div className="absolute top-4 left-6 z-20">
-            <Link href={NAVIGATION_ROUTES.UIPAGE}>
-              <Typography variant="linkPrimary" className="text-white">
-                ← Back
-              </Typography>
-            </Link>
-          </div>
+          <BackArrow />
           <div className="absolute inset-0">
             <Image
               src="/images/profile-bg.jpg"
