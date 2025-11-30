@@ -75,7 +75,7 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-slide-up animation-delay-400">
-              <Link href={NAVIGATION_ROUTES.LOGIN}>
+              <Link href="rooms">
                 <button className="group relative px-8 py-4 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
                   <span className="relative z-10 flex items-center gap-2">
                     {EXPLORE}
