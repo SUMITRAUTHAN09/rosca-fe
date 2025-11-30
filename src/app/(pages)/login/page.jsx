@@ -115,124 +115,208 @@ function LoginContent() {
   };
 
   return (
-    <div className="flex w-full bg-blue rounded-lg shadow-lg overflow-hidden bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+    <div className="flex min-h-screen w-full bg-gradient-to-br from-orange-400 via-pink-500 to-purple-700">
       <BackArrow />
-      <div className="hidden md:flex w-1/2 items-center justify-center bg-blue-900 relative">
-        <div className="absolute inset-0">
-          <Image
-            src={IMAGES.loginBg2}
-            alt="RentalRooms Login"
-            fill
-            className="object-cover opacity-80"
-            priority
-          />
-        </div>
-        <div className="absolute z-10 text-center text-white px-6">
-          <Typography variant="h4" className="block">
-            {RENTAL}
+      
+      {/* Left Section - Image & Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 to-purple-900/90 z-10"></div>
+        <Image
+          src={IMAGES.loginBg2}
+          alt="RentalRooms Login"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-12 text-center">
+          <div className="mb-8 animate-fade-in">
+            <Image
+              src={IMAGES.logo}
+              alt="Logo"
+              width={80}
+              height={80}
+              className="mx-auto drop-shadow-2xl"
+            />
+          </div>
+          <Typography variant="h1" className="text-white text-4xl font-bold mb-4 drop-shadow-lg">
+            Welcome Back to {RENTAL}
           </Typography>
-          <Typography variant="paraPrimary" className="text-white">
-            "Find your perfect stay — Comfort & Convenience at your fingertips."
+          <Typography variant="h3" className="text-white/90 text-lg max-w-md leading-relaxed">
+            Your perfect stay is just a login away. Find comfort and convenience at your fingertips.
           </Typography>
+          <div className="mt-12 grid grid-cols-3 gap-8 text-white/80">
+            <div className="text-center">
+              <div className="text-3xl font-bold">1000+</div>
+              <div className="text-sm mt-1">Properties</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold">500+</div>
+              <div className="text-sm mt-1">Happy Clients</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold">50+</div>
+              <div className="text-sm mt-1">Cities</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="relative w-full md:w-1/2 flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
-        <div className="relative w-full max-w-md p-10 bg-white/30 backdrop-blur-md border border-white/40 rounded-2xl shadow-2xl">
-          <Typography variant="h2" className="ml-35">
-            {LOGIN}
-          </Typography>
+      {/* Right Section - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-md">
+          {/* Card Container */}
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 lg:p-10 border border-white/20">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="inline-block lg:hidden mb-4">
+                <Image
+                  src={IMAGES.logo}
+                  alt="Logo"
+                  width={60}
+                  height={60}
+                  className="mx-auto"
+                />
+              </div>
+              <Typography variant="h2" className="text-3xl font-bold text-gray-800 mb-2">
+                Welcome Back
+              </Typography>
+              <Typography variant="body" className="text-gray-600">
+                Sign in to continue to your account
+              </Typography>
+            </div>
 
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-4">
-                <FormInput
-                  id="email"
-                  name="email"
-                  label="Email"
-                  type="email"
-                  placeholder="Enter your email"
+            {/* Login Form */}
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting }) => (
+                <Form className="space-y-5">
+                  <FormInput
+                    id="email"
+                    name="email"
+                    label="Email Address"
+                    type="email"
+                    placeholder="you@example.com"
+                  />
+                  <FormInput
+                    id="password"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    placeholder="Enter your password"
+                  />
+
+                  {/* Forgot Password Link */}
+                  <div className="flex justify-end">
+                    <Link
+                      href={NAVIGATION_ROUTES.FORGET_PASSWORD}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    >
+                      Forgot Password?
+                    </Link>
+                  </div>
+
+                  {/* Login Button */}
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                        </svg>
+                        Signing in...
+                      </span>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500 font-medium">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            {/* Google Sign In Button */}
+            <Button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isGoogleLoading}
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 hover:border-gray-400 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                 />
-                <FormInput
-                  id="password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  placeholder="Enter your password"
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
                 />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold cursor-pointer"
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              {isGoogleLoading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  Connecting...
+                </span>
+              ) : (
+                "Continue with Google"
+              )}
+            </Button>
+
+            {/* Sign Up Link */}
+            <div className="mt-6 text-center">
+              <Typography variant="body" className="text-gray-600">
+                Don't have an account?{" "}
+                <Link
+                  href={NAVIGATION_ROUTES.SIGNUP}
+                  className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
                 >
-                  {isSubmitting ? "Logging in..." : LOGIN}
-                </Button>
-              </Form>
-            )}
-          </Formik>
-
-          <Typography variant="paraSecondary" className="ml-30">
-            <Link
-              href={NAVIGATION_ROUTES.FORGET_PASSWORD}
-              className="text-blue-500 hover:text-red-600"
-            >
-              Forgot Password?
-            </Link>
-          </Typography>
-
-          <Typography
-            variant="paraSecondary"
-            className="mt-4 ml-20 text-black-600"
-          >
-            Don't have an account?{" "}
-            <Link
-              href={NAVIGATION_ROUTES.SIGNUP}
-              className="text-blue-500 hover:text-blue-800"
-            >
-              sign up
-            </Link>
-          </Typography>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-400"></div>
-            <span className="text-gray-700 text-sm font-medium">OR</span>
-            <div className="flex-1 h-px bg-gray-400"></div>
+                  Sign up for free
+                </Link>
+              </Typography>
+            </div>
           </div>
 
-          {/* Google Sign In Button */}
-          <Button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={isGoogleLoading}
-            className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border-2 border-gray-300 py-3 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              />
-            </svg>
-            {isGoogleLoading
-              ? "Connecting to Google..."
-              : "Continue with Google"}
-          </Button>
+          {/* Footer Text */}
+          <div className="mt-6 text-center">
+            <Typography variant="body" className="text-white/80 text-sm">
+              By continuing, you agree to our{" "}
+              <Link href="#" className="underline hover:text-white transition-colors">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="#" className="underline hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+            </Typography>
+          </div>
         </div>
       </div>
     </div>
@@ -244,10 +328,16 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-400 via-pink-500 to-purple-700">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-xl font-semibold text-gray-800">Loading...</p>
+            <div className="relative">
+              <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-white mx-auto"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-white/20"></div>
+              </div>
+            </div>
+            <p className="text-xl font-semibold text-white mt-6">Loading...</p>
+            <p className="text-sm text-white/80 mt-2">Please wait a moment</p>
           </div>
         </div>
       }
