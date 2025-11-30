@@ -1,6 +1,6 @@
 export const RENTAL = "Rental Rooms";
-export const LOGIN = "Log in";
-export const SIGNUP = "Sign in";
+export const LOGIN = "Log In";
+export const SIGNUP = "Sign Up";
 export const EXPLORE = "Explore Rooms";
 export const HOME = "Home";
 export const ROOM = "Rooms";
@@ -21,6 +21,9 @@ export const NAVIGATION_ROUTES = {
   ABOUT: "/about",
   CONTACT: "/contact",
   ADD_ROOM: "/add-room",
+  PRIVACY_POLICY: "/privacy-policy",
+  TERMS_CONDITIONS: "/terms-conditions",
+  HELP: "/help",
 };
 
 // In your constants file

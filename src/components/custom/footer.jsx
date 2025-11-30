@@ -102,9 +102,17 @@ export default function Footer() {
           </Typography>
 
           <div className="flex space-x-6 text-sm text-gray-500">
-            <Typography variant="linkSecondary"> Privacy Policy</Typography>
-            <Typography variant="linkSecondary">Terms & Conditions</Typography>
-            <Typography variant="linkSecondary">Help</Typography>
+            <Link href={NAVIGATION_ROUTES.PRIVACY_POLICY}>
+              <Typography variant="linkSecondary"> Privacy Policy</Typography>
+            </Link>
+            <Link href={NAVIGATION_ROUTES.TERMS_CONDITIONS}>
+              <Typography variant="linkSecondary">
+                Terms & Conditions
+              </Typography>
+            </Link>
+            <Link href={NAVIGATION_ROUTES.HELP}>
+              <Typography variant="linkSecondary">Help</Typography>
+            </Link>
           </div>
         </div>
       </section>

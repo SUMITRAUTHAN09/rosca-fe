@@ -89,7 +89,7 @@ export default function NewPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-orange-300 via-pink-400 to-purple-600">
+    <div className="flex items-center justify-center min-h-screen w-full bg-gray-200">
       <BackArrow />
       <div className="w-full max-w-md p-10 bg-white/60 backdrop-blur-md border border-black/40 rounded-2xl shadow-2xl mx-4">
         <Typography variant="h4" className="ml-25 text-center">
