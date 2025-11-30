@@ -3,49 +3,144 @@
 import { Typography } from "@/components/custom/typography";
 import { Button } from "@/components/ui/button";
 import { useAuthStore, useRoomStore } from "@/Store/Profile-data";
-
 import BackArrow from "@/components/custom/back_arrow";
 import Footer from "@/components/custom/footer";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { EDIT_FIELDS } from "../../../Store/AddRooms_Fields";
 import { NAVIGATION_ROUTES } from "../../constant";
 
 export default function ProfilePage() {
   const { rooms, deleteRoom, updateRoom } = useRoomStore();
+  const { user, setUser } = useAuthStore();
+  
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
-  const { user } = useAuthStore();
+  
+  // Profile picture upload states
+  const [profilePicturePreview, setProfilePicturePreview] = useState(user?.profilePicture || null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  // Filter rooms by current user
+  const userRooms = rooms.filter((room) => room.userId === user?.id);
 
-  const handleDelete = (id) => {
-    deleteRoom(id);
-    toast.success("selectedRoom deleted successfully!");
+  // Load user data on mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        const response = await fetch("/api/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+          setProfilePicturePreview(data.user.profilePicture);
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    loadUserData();
+  }, [setUser]);
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a valid image (JPG, PNG, WebP, or GIF)");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setSelectedFile(file);
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleView = (selectedRoom) => {
+  const handleUploadProfilePicture = async () => {
+    if (!selectedFile) {
+      toast.error("Please select an image first");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("profilePicture", selectedFile);
+
+      const token = localStorage.getItem("authToken");
+      const response = await fetch("/api/users/upload-profile-picture", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUser(data.user);
+        setSelectedFile(null);
+        toast.success("Profile picture updated successfully!");
+      } else {
+        toast.error(data.message || "Failed to upload profile picture");
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      toast.error("Error uploading profile picture");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    deleteRoom(id);
+    toast.success("Room deleted successfully!");
+  };
+
+  const handleView = (selectedRoom: any) => {
     setSelectedRoom(selectedRoom);
     setIsViewModalOpen(true);
   };
 
-  const handleEdit = (selectedRoom) => {
+  const handleEdit = (selectedRoom: any) => {
     setEditForm(selectedRoom);
     setIsEditModalOpen(true);
-    console.log("user");
   };
 
-  const handleEditChange = (e) => {
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     updateRoom(editForm);
-    toast.success("selectedRoom updated successfully!");
+    toast.success("Room updated successfully!");
     setIsEditModalOpen(false);
   };
 
@@ -68,30 +163,58 @@ export default function ProfilePage() {
           </div>
 
           <div className="relative z-10 flex flex-col items-center text-center gap-3 py-6">
-            {/* Profile Image */}
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md">
-              <Image
-                src="/images/default-avatar.png"
-                alt="User Profile"
-                width={100}
-                height={100}
-                className="object-cover"
-              />
+            {/* Profile Picture Upload Section */}
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md bg-gray-300 flex items-center justify-center">
+                {profilePicturePreview ? (
+                  <Image
+                    src={profilePicturePreview}
+                    alt="User Profile"
+                    width={100}
+                    height={100}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <span className="text-4xl">👤</span>
+                )}
+              </div>
+              {/* Upload Button Overlay */}
+              <label className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer shadow-lg transition">
+                📷
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleProfilePictureChange}
+                  className="hidden"
+                />
+              </label>
             </div>
 
+            {/* Upload Button */}
+            {selectedFile && (
+              <Button
+                onClick={handleUploadProfilePicture}
+                disabled={isUploading}
+                className="mt-2 bg-green-500 text-white font-medium px-4 py-1 rounded-full hover:bg-green-600 text-sm"
+              >
+                {isUploading ? "Uploading..." : "Save Picture"}
+              </Button>
+            )}
+
+            {/* User Name */}
             <Typography
               variant="h2"
               className="font-semibold tracking-wide mt-3"
             >
-              {user?.name || "Guest User"}
+              {user?.firstName} {user?.lastName || ""}
             </Typography>
 
             {/* Role */}
             <Typography
               variant="paraSecondary"
-              className="opacity-80 text-sm -mt-1"
+              className="opacity-80 text-sm -mt-1 capitalize"
             >
-              {user?.role || "No Role Assigned"}
+              {user?.userType ? `${user.userType} Account` : "No Role Assigned"}
             </Typography>
 
             {/* Subtitle */}
@@ -102,7 +225,7 @@ export default function ProfilePage() {
               Manage and personalize your listed rooms
             </Typography>
 
-            {/* Button */}
+            {/* Add Room Button */}
             <Link href={NAVIGATION_ROUTES.ADD_ROOM}>
               <Button className="mt-2 bg-blue-200 text-black font-medium px-6 py-2 rounded-full shadow-sm hover:bg-blue-300 transition-all">
                 + Add New Property
@@ -111,24 +234,24 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* selectedRoom Listing Section */}
+        {/* Rooms Listing Section */}
         <section id="rooms" className="w-full max-w-6xl py-16 px-6 text-center">
           <Typography variant="h1" className="m-10 block">
             My Rooms
           </Typography>
 
-          {rooms.length > 0 ? (
+          {userRooms.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-              {rooms.map((item) => (
+              {userRooms.map((item) => (
                 <div
                   key={item.id}
                   className="relative bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition"
                 >
-                  {/* selectedRoom Image */}
+                  {/* Room Image */}
                   <div className="relative">
                     {item.images && item.images.length > 0 ? (
                       <Image
-                        src={URL.createObjectURL(item.images[0])}
+                        src={item.images[0]}
                         alt={item.title}
                         width={600}
                         height={400}
@@ -141,7 +264,7 @@ export default function ProfilePage() {
                     )}
                   </div>
 
-                  {/* selectedRoom Details */}
+                  {/* Room Details */}
                   <div className="m-5">
                     <Typography variant="h4" className="mb-2 block">
                       {item.title}
@@ -185,16 +308,15 @@ export default function ProfilePage() {
               variant="paraHighLight"
               className="text-center text-gray-600 mt-6"
             >
-              You haven’t added any rooms yet.
+              You haven't added any rooms yet.
             </Typography>
           )}
         </section>
 
         {/* VIEW MODAL */}
         {isViewModalOpen && selectedRoom && (
-          <div className="fixed rounded-3xl flex items-center justify-center  inset-0 bg-black/40 backdrop-blur-sm z-50  ">
+          <div className="fixed rounded-3xl flex items-center justify-center inset-0 bg-black/40 backdrop-blur-sm z-50">
             <main className="relative bg-gray-200 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-xl p-6">
-              {/* Close Button */}
               <button
                 onClick={() => setIsViewModalOpen(false)}
                 className="absolute top-4 right-4 text-2xl text-gray-700 hover:text-red-500 transition cursor-pointer"
@@ -207,13 +329,19 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   {/* Room Image */}
                   <div className="overflow-hidden rounded-2xl shadow-lg h-full">
-                    <Image
-                      src={selectedRoom.image || "/images/default-room.jpg"}
-                      alt={selectedRoom.title}
-                      width={1400}
-                      height={700}
-                      className="object-cover w-full h-full rounded-2xl"
-                    />
+                    {selectedRoom.images && selectedRoom.images.length > 0 ? (
+                      <Image
+                        src={selectedRoom.images[0]}
+                        alt={selectedRoom.title}
+                        width={1400}
+                        height={700}
+                        className="object-cover w-full h-full rounded-2xl"
+                      />
+                    ) : (
+                      <div className="w-full h-96 bg-gray-300 rounded-2xl flex items-center justify-center">
+                        No Image
+                      </div>
+                    )}
                   </div>
 
                   {/* Room Details */}
@@ -227,7 +355,7 @@ export default function ProfilePage() {
                       </Typography>
 
                       <div className="flex items-center text-gray-600 mt-2 text-lg">
-                        <span className="material-icons mr-2">📍</span>
+                        <span className="mr-2">📍</span>
                         <span>{selectedRoom.location}</span>
                       </div>
 
@@ -243,28 +371,6 @@ export default function ProfilePage() {
                       {selectedRoom.description ||
                         "A clean, comfortable and affordable stay with essential amenities."}
                     </Typography>
-
-                    {/* Host Info */}
-                    {selectedRoom.host && (
-                      <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl shadow-sm">
-                        <Image
-                          src={
-                            selectedRoom.host?.avatar ||
-                            "/images/default-avatar.png"
-                          }
-                          alt={selectedRoom.host?.name || "Host"}
-                          width={50}
-                          height={50}
-                          className="rounded-full object-cover"
-                        />
-                        <Typography variant="paraPrimary">
-                          Hosted by{" "}
-                          <span className="font-semibold">
-                            {selectedRoom.host?.name}
-                          </span>
-                        </Typography>
-                      </div>
-                    )}
 
                     {/* Amenities */}
                     <div className="bg-gray-50 rounded-xl p-5 shadow-sm">
@@ -283,7 +389,7 @@ export default function ProfilePage() {
                           🛁 {selectedRoom.baths} Bath
                         </span>
 
-                        {selectedRoom.amenities?.map((item, i) => (
+                        {selectedRoom.amenities?.map((item: string, i: number) => (
                           <span key={i} className="flex items-center gap-2">
                             ✅ {item}
                           </span>
@@ -316,14 +422,10 @@ export default function ProfilePage() {
                         variant="h3"
                         className="text-xl font-semibold"
                       >
-                        Interested in this Room?
+                        Contact Information
                       </Typography>
                       <Typography variant="paraHighLight">
                         Call Owner : +91 {selectedRoom.contact}
-                      </Typography>
-
-                      <Typography variant="paraSecondary">
-                        Contact the owner directly to schedule a visit.
                       </Typography>
                     </div>
                   </div>
@@ -338,9 +440,8 @@ export default function ProfilePage() {
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
             <form
               onSubmit={handleEditSubmit}
-              className="w-full max-w-lg bg-white/60 backdrop-blur-md border border-black/30 rounded-2xl shadow-2xl p-8 mx-4 relative "
+              className="w-full max-w-lg bg-white/60 backdrop-blur-md border border-black/30 rounded-2xl shadow-2xl p-8 mx-4 relative"
             >
-              {/* Close (Cancel) Button */}
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
@@ -348,29 +449,63 @@ export default function ProfilePage() {
               >
                 ❌
               </button>
+
               <div className="flex justify-center">
                 <Typography
                   variant="h4"
-                  className="text-center text-gray-800 mb-2 font-semibold"
+                  className="text-center text-gray-800 mb-6 font-semibold"
                 >
-                  Edit Room details
+                  Edit Room Details
                 </Typography>
               </div>
 
               {/* Input Fields */}
               <div className="space-y-4">
-                {EDIT_FIELDS.map((field) => (
-                  <div key={field.name}>
-                    <Typography variant="h3">{field.label}</Typography>
-                    <input
-                      name={field.name}
-                      value={editForm[field.name] || ""}
-                      onChange={handleEditChange}
-                      placeholder={field.placeholder}
-                      className="w-full border border-gray-300 rounded-lg p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                  </div>
-                ))}
+                <div>
+                  <Typography variant="h3">Title</Typography>
+                  <input
+                    name="title"
+                    value={editForm.title || ""}
+                    onChange={handleEditChange}
+                    placeholder="Room title"
+                    className="w-full border border-gray-300 rounded-lg p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+
+                <div>
+                  <Typography variant="h3">Location</Typography>
+                  <input
+                    name="location"
+                    value={editForm.location || ""}
+                    onChange={handleEditChange}
+                    placeholder="Room location"
+                    className="w-full border border-gray-300 rounded-lg p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+
+                <div>
+                  <Typography variant="h3">Price</Typography>
+                  <input
+                    name="price"
+                    type="number"
+                    value={editForm.price || ""}
+                    onChange={handleEditChange}
+                    placeholder="Price per month"
+                    className="w-full border border-gray-300 rounded-lg p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+
+                <div>
+                  <Typography variant="h3">Description</Typography>
+                  <textarea
+                    name="description"
+                    value={editForm.description || ""}
+                    onChange={handleEditChange}
+                    placeholder="Room description"
+                    rows={3}
+                    className="w-full border border-gray-300 rounded-lg p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
               </div>
 
               {/* Buttons */}
