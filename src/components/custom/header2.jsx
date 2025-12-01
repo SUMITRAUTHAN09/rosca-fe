@@ -27,10 +27,9 @@ export default function Header2() {
   };
 
   const menuItem = [
-    { name: "Rooms", href: "#rooms" },
-    { name: "About", href: "#about" },
+    { name: "Profile", href: "/user-profile2" },
     { name: "Contact", href: "#contact" },
-    { name: "Wishlist", href: "/user-profile2" },
+    { name: "Wishlist", href: "/wishlist" },
   ];
 
   return (
