@@ -75,9 +75,10 @@ export const uploadProfilePicture = async (file) => {
 
     console.log('✅ Profile picture uploaded successfully:', response.data);
     
-    // ✅ FIXED: Only update user data (backend doesn't return a new token)
+    // Update user in localStorage
     if (response.data.user) {
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('authToken', response.data.token || token);
     }
 
     return response.data;
@@ -130,8 +131,6 @@ export const getUserRooms = async () => {
     const response = await instance.get('/rooms/user/my-rooms');
 
     console.log('✅ User rooms fetched:', response.data);
-    
-    // ✅ Backend returns: { success: true, count: X, rooms: [...] }
     return response.data;
   } catch (error) {
     console.error('❌ Error fetching user rooms:', error);

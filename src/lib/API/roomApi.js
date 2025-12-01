@@ -18,10 +18,10 @@ export const getImageUrl = (imagePath) => {
   return `${getServerBaseUrl()}${imagePath}`;
 };
 
-// ✅ FIXED: Use 'authToken' to match userApi.js
+// Helper function to get auth token
 const getAuthToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('authToken'); // Changed from 'token'
+    return localStorage.getItem('token');
   }
   return null;
 };
@@ -42,7 +42,7 @@ export async function getAllRooms() {
     const response = await fetch(`${baseUrl}/rooms`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
+      cache: "no-store", // Disable caching for dynamic data
     });
 
     if (!response.ok) {
@@ -138,7 +138,7 @@ export async function addRoom(formData) {
     const response = await fetch(`${baseUrl}/rooms`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}` // ✅ Add auth token
       },
       body: formData,
       // DO NOT set Content-Type header; browser sets it automatically for multipart/form-data
@@ -174,7 +174,7 @@ export async function updateRoom(id, roomData) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}` // ✅ Add auth token
       },
       body: JSON.stringify(roomData),
     });
@@ -207,7 +207,7 @@ export async function deleteRoom(id) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}` // ✅ Add auth token
       },
     });
 
