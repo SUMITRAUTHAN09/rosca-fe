@@ -18,14 +18,31 @@ export const getImageUrl = (imagePath) => {
   return `${getServerBaseUrl()}${imagePath}`;
 };
 
+// ✅ FIXED: Use 'authToken' to match userApi.js
+const getAuthToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('authToken'); // Changed from 'token'
+  }
+  return null;
+};
+
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
+  };
+};
+
 export async function getAllRooms() {
   try {
     console.log("🔍 Fetching rooms from:", `${baseUrl}/rooms`);
 
-    const response = await fetch(`${baseUrl}/rooms `, {
+    const response = await fetch(`${baseUrl}/rooms`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store", // Disable caching for dynamic data
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -68,6 +85,40 @@ export async function getRoomById(id) {
   }
 }
 
+// ✅ NEW: Get user's rooms
+export async function getUserRooms() {
+  try {
+    console.log("🏠 Fetching user rooms...");
+    const token = getAuthToken();
+
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${baseUrl}/rooms/user/my-rooms`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("❌ Failed to fetch user rooms:", errorData);
+      throw new Error(errorData.message || "Failed to fetch user rooms");
+    }
+
+    const data = await response.json();
+    console.log("✅ User rooms fetched successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Get user rooms error:", error);
+    throw error;
+  }
+}
+
 export async function addRoom(formData) {
   try {
     console.log("📤 ═══════════════════════════════════════");
@@ -79,8 +130,16 @@ export async function addRoom(formData) {
     }
     console.log("📤 ═══════════════════════════════════════");
 
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error("No authentication token found. Please login.");
+    }
+
     const response = await fetch(`${baseUrl}/rooms`, {
       method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
       body: formData,
       // DO NOT set Content-Type header; browser sets it automatically for multipart/form-data
     });
@@ -105,10 +164,18 @@ export async function addRoom(formData) {
 export async function updateRoom(id, roomData) {
   try {
     console.log("🔄 Updating room:", id);
+    const token = getAuthToken();
+
+    if (!token) {
+      throw new Error("No authentication token found. Please login.");
+    }
 
     const response = await fetch(`${baseUrl}/rooms/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(roomData),
     });
 
@@ -130,10 +197,18 @@ export async function updateRoom(id, roomData) {
 export async function deleteRoom(id) {
   try {
     console.log("🗑 Deleting room:", id);
+    const token = getAuthToken();
+
+    if (!token) {
+      throw new Error("No authentication token found. Please login.");
+    }
 
     const response = await fetch(`${baseUrl}/rooms/${id}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
     });
 
     if (!response.ok) {
