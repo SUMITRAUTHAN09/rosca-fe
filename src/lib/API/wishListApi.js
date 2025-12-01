@@ -1,15 +1,4 @@
-// lib/API/wishlistApi.js
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-
-/**
- * Get authentication token from localStorage
- */
-const getAuthToken = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("authToken");
-  }
-  return null;
-};
 
 /**
  * Get user's wishlist
@@ -21,7 +10,8 @@ export const getWishlist = async () => {
       throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/wishlist`, {
+    // Removed /api from path below
+    const response = await fetch(`${API_BASE_URL}/wishlist`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -42,9 +32,9 @@ export const getWishlist = async () => {
   }
 };
 
+
 /**
  * Add room to wishlist
- * @param {string} roomId - The ID of the room to add
  */
 export const addToWishlist = async (roomId) => {
   try {
@@ -53,7 +43,8 @@ export const addToWishlist = async (roomId) => {
       throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/wishlist/add/${roomId}`, {
+    // Removed /api from path below
+    const response = await fetch(`${API_BASE_URL}/wishlist/add/${roomId}`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -75,10 +66,8 @@ export const addToWishlist = async (roomId) => {
   }
 };
 
-/**
- * Remove room from wishlist
- * @param {string} roomId - The ID of the room to remove
- */
+// Similarly update other fetch calls...
+
 export const removeFromWishlist = async (roomId) => {
   try {
     const token = getAuthToken();
@@ -86,7 +75,7 @@ export const removeFromWishlist = async (roomId) => {
       throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/wishlist/remove/${roomId}`, {
+    const response = await fetch(`${API_BASE_URL}/wishlist/remove/${roomId}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -107,9 +96,6 @@ export const removeFromWishlist = async (roomId) => {
   }
 };
 
-/**
- * Clear entire wishlist
- */
 export const clearWishlist = async () => {
   try {
     const token = getAuthToken();
@@ -117,7 +103,7 @@ export const clearWishlist = async () => {
       throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/wishlist/clear`, {
+    const response = await fetch(`${API_BASE_URL}/wishlist/clear`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -138,10 +124,6 @@ export const clearWishlist = async () => {
   }
 };
 
-/**
- * Check if a room is in user's wishlist
- * @param {string} roomId - The ID of the room to check
- */
 export const checkInWishlist = async (roomId) => {
   try {
     const token = getAuthToken();
@@ -149,7 +131,7 @@ export const checkInWishlist = async (roomId) => {
       throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/wishlist/check/${roomId}`, {
+    const response = await fetch(`${API_BASE_URL}/wishlist/check/${roomId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -171,9 +153,7 @@ export const checkInWishlist = async (roomId) => {
 };
 
 /**
- * Toggle wishlist status (add if not in wishlist, remove if already in wishlist)
- * @param {string} roomId - The ID of the room
- * @param {boolean} isInWishlist - Current wishlist status
+ * Toggle wishlist status
  */
 export const toggleWishlist = async (roomId, isInWishlist) => {
   try {
@@ -188,7 +168,6 @@ export const toggleWishlist = async (roomId, isInWishlist) => {
   }
 };
 
-// Export all functions as default object as well
 export default {
   getWishlist,
   addToWishlist,
