@@ -178,3 +178,50 @@ export const logoutUser = async () => {
     throw error;
   }
 };
+/**
+ * Get single room by ID - VIEW button
+ */
+export const getRoomById = async (roomId) => {
+  try {
+    console.log('🔍 Fetching room by ID:', roomId);
+    const instance = createAuthInstance();
+    const response = await instance.get(`/rooms/${roomId}`);
+    console.log('✅ Room fetched:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error fetching room:', error);
+    throw new Error(error.response?.data?.message || 'Failed to fetch room');
+  }
+};
+
+/**
+ * Update room - EDIT button  
+ */
+export const updateRoom = async (roomId, roomData) => {
+  try {
+    console.log('✏️ Updating room:', roomId);
+    const instance = createAuthInstance();
+    const response = await instance.put(`/rooms/${roomId}`, roomData);
+    console.log('✅ Room updated:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error updating room:', error);
+    throw new Error(error.response?.data?.message || 'Failed to update room');
+  }
+};
+
+/**
+ * Delete room - DELETE button (if needed)
+ */
+export const deleteRoom = async (roomId) => {
+  try {
+    console.log('🗑️ Deleting room:', roomId);
+    const instance = createAuthInstance();
+    const response = await instance.delete(`/rooms/${roomId}`);
+    console.log('✅ Room deleted');
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error deleting room:', error);
+    throw new Error(error.response?.data?.message || 'Failed to delete room');
+  }
+};
