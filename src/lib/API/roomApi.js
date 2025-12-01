@@ -21,7 +21,7 @@ export const getImageUrl = (imagePath) => {
 // Helper function to get auth token
 const getAuthToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('token');
+    return localStorage.getItem('authToken');
   }
   return null;
 };
